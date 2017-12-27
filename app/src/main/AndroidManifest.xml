@@ -19,13 +19,17 @@
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".AddAlarmActivity"
+            android:theme="@style/Fullscreen" />
         <!-- </editor-fold> -->
 
 
@@ -40,10 +44,10 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".service.AlarmAlertBroadcastReceiver" />
         <!-- </editor-fold> -->
 
-        <activity android:name=".AddAlarmActivity"></activity>
     </application>
 
 </manifest>
