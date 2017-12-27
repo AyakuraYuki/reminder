@@ -28,7 +28,6 @@
                 android:src="@drawable/ic_close_icon" />
 
             <TextView
-                android:id="@+id/textView-title"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
@@ -102,7 +101,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_marginEnd="0dp"
                         android:layout_marginStart="20dp"
                         android:contentDescription="@string/all_day_description"
                         android:src="@drawable/ic_time" />
@@ -113,7 +111,8 @@
                         android:layout_centerVertical="true"
                         android:layout_marginStart="40dp"
                         android:layout_toEndOf="@id/icon_all_day"
-                        android:text="@string/all_day_text" />
+                        android:text="@string/all_day_text"
+                        tools:ignore="RelativeOverlap" />
 
                     <Switch
                         android:id="@+id/switch_all_day"
@@ -126,6 +125,11 @@
                 </RelativeLayout>
                 <!-- endregion -->
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/split_line" />
+
                 <TextView
                     android:id="@+id/event_date"
                     android:layout_width="match_parent"
@@ -133,7 +137,7 @@
                     android:gravity="center_vertical"
                     android:paddingEnd="10dp"
                     android:paddingStart="75dp"
-                    android:text="选择活动日期" />
+                    android:text="@string/select_event_date_tip" />
 
                 <TextView
                     android:id="@+id/event_start_time"
@@ -142,7 +146,7 @@
                     android:gravity="center_vertical"
                     android:paddingEnd="10dp"
                     android:paddingStart="75dp"
-                    android:text="选择开始时间" />
+                    android:text="@string/select_start_time_tip" />
 
                 <TextView
                     android:id="@+id/event_end_time"
@@ -151,10 +155,45 @@
                     android:gravity="center_vertical"
                     android:paddingEnd="10dp"
                     android:paddingStart="75dp"
-                    android:text="选择结束时间" />
+                    android:text="@string/select_end_time_tip" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/split_line" />
+
+                <RelativeLayout
+                    android:id="@+id/layout_alarm_replay"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_replay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:background="@drawable/ic_replay"
+                        tools:ignore="ContentDescription" />
+
+                    <Spinner
+                        android:id="@+id/spinner_replay"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_replay" />
+
+                </RelativeLayout>
 
             </LinearLayout>
             <!-- endregion -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/split_line" />
+
 
         </LinearLayout>
 
