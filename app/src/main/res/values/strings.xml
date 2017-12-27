@@ -14,4 +14,8 @@
     <string name="select_event_date_tip">选择活动日期</string>
     <string name="select_start_time_tip">活动开始时间</string>
     <string name="select_end_time_tip">活动结束时间</string>
+    <string name="vibration">震动</string>
+    <string name="queue_ringtone">选择铃声</string>
+    <string name="input_event_location">输入活动地点</string>
+    <string name="remark">备注</string>
 </resources>

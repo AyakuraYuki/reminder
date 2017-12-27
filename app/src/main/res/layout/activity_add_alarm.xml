@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- region title edit text -->
+            <!-- region 标题 -->
             <EditText
                 android:id="@+id/event_title"
                 android:layout_width="match_parent"
@@ -85,13 +85,13 @@
                 android:layout_height="1dp"
                 android:background="@color/split_line" />
 
-            <!-- region event option -->
+            <!-- region 时间和提醒 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- region all day switch -->
+                <!-- region 切换全天活动 -->
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp">
@@ -162,8 +162,8 @@
                     android:layout_height="1dp"
                     android:background="@color/split_line" />
 
+                <!-- region 选择重复类别 -->
                 <RelativeLayout
-                    android:id="@+id/layout_alarm_replay"
                     android:layout_width="match_parent"
                     android:layout_height="50dp">
 
@@ -173,7 +173,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="20dp"
-                        android:background="@drawable/ic_replay"
+                        android:src="@drawable/ic_replay"
                         tools:ignore="ContentDescription" />
 
                     <Spinner
@@ -185,6 +185,194 @@
                         android:layout_toEndOf="@id/icon_replay" />
 
                 </RelativeLayout>
+                <!-- endregion -->
+
+                <!-- region 提醒时间 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_notifications"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_notifications"
+                        tools:ignore="ContentDescription" />
+
+                    <Spinner
+                        android:id="@+id/spinner_notifications"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_notifications" />
+
+                </RelativeLayout>
+                <!-- endregion -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/split_line" />
+
+                <!-- region 选择铃声 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_ringtone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_queue_music"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:id="@+id/textView_select_ringtone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_ringtone"
+                        android:text="@string/queue_ringtone"
+                        tools:ignore="RelativeOverlap" />
+
+                </RelativeLayout>
+                <!-- endregion -->
+
+                <!-- region 震动 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_vibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_time"
+                        tools:ignore="ContentDescription" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_vibrate"
+                        android:text="@string/vibration"
+                        tools:ignore="RelativeOverlap" />
+
+                    <Switch
+                        android:id="@+id/switch_vibrate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp" />
+
+                </RelativeLayout>
+                <!-- endregion -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/split_line" />
+
+                <!-- region 地点 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_local"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_local"
+                        tools:ignore="ContentDescription" />
+
+                    <EditText
+                        android:id="@+id/event_location"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_local"
+                        android:background="@null"
+                        android:hint="@string/input_event_location"
+                        android:textSize="14sp" />
+
+                </RelativeLayout>
+                <!-- endregion -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/split_line" />
+
+                <!-- region 活动颜色 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_color_lens"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_color_lens"
+                        tools:ignore="ContentDescription" />
+
+                    <Spinner
+                        android:id="@+id/spinner_color_lens"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_color_lens" />
+
+                </RelativeLayout>
+                <!-- endregion -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/split_line" />
+
+                <!-- region 备注 -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp">
+
+                    <ImageView
+                        android:id="@+id/icon_remark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="20dp"
+                        android:src="@drawable/ic_remark"
+                        tools:ignore="ContentDescription" />
+
+                    <EditText
+                        android:id="@+id/remark"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_remark"
+                        android:background="@null"
+                        android:hint="@string/remark"
+                        android:textSize="14sp" />
+
+                </RelativeLayout>
+                <!-- endregion -->
 
             </LinearLayout>
             <!-- endregion -->

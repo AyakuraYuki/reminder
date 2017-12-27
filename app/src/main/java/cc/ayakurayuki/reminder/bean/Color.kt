@@ -14,4 +14,6 @@ class Color(var name: String, var code: Int) {
         val ORANGE: String = "橘红"
         val DEEP_SKY_BLUE: String = "深空蓝"
     }
+
+
 }
