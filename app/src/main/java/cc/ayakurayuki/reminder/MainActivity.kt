@@ -10,7 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.ayakurayuki.reminder.database.DBSupport
 import cc.ayakurayuki.reminder.util.ColorUtils
-import cc.ayakurayuki.reminder.util.CommonUtils
 import com.github.tibolte.agendacalendarview.AgendaCalendarView
 import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent
 import com.github.tibolte.agendacalendarview.models.CalendarEvent
@@ -46,8 +45,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         dbSupport = DBSupport(applicationContext)
         initialAgendaCalendar()
-
-        CommonUtils.showTextToast(applicationContext, "OK")
     }
 
     /**

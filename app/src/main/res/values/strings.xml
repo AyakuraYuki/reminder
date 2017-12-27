@@ -5,4 +5,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="new_event">新建活动</string>
+    <string name="save">保存</string>
+    <string name="input_event_title">输入活动标题</string>
+    <string name="button_close_activity_description">close activity</string>
+    <string name="all_day_description">Switch to all day event.</string>
+    <string name="all_day_text">全天</string>
 </resources>

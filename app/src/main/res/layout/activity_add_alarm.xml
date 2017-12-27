@@ -6,10 +6,12 @@
     android:orientation="vertical"
     tools:context="cc.ayakurayuki.reminder.AddAlarmActivity">
 
+    <!-- region ActionBar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -19,10 +21,144 @@
                 android:id="@+id/button_close_activity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="5dp"
+                android:background="@color/cloaking"
+                android:contentDescription="@string/button_close_activity_description"
                 android:src="@drawable/ic_close_icon" />
+
+            <TextView
+                android:id="@+id/textView-title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/new_event"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/textView_save"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingEnd="5dp"
+                android:paddingStart="0dp"
+                android:text="@string/save"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/split_line" />
+
     </LinearLayout>
+    <!-- endregion -->
+
+    <!-- region Main content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- region title edit text -->
+            <EditText
+                android:id="@+id/event_title"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@null"
+                android:hint="@string/input_event_title"
+                android:paddingEnd="20dp"
+                android:paddingStart="20dp" />
+            <!-- endregion -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/split_line" />
+
+            <!-- region event option -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- region all day switch -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp">
+
+                    <ImageView
+                        android:id="@+id/icon_all_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginStart="20dp"
+                        android:contentDescription="@string/all_day_description"
+                        android:src="@drawable/ic_time" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="40dp"
+                        android:layout_toEndOf="@id/icon_all_day"
+                        android:text="@string/all_day_text" />
+
+                    <Switch
+                        android:id="@+id/switch_all_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="10dp" />
+
+                </RelativeLayout>
+                <!-- endregion -->
+
+                <TextView
+                    android:id="@+id/event_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="75dp"
+                    android:text="选择活动日期" />
+
+                <TextView
+                    android:id="@+id/event_start_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="75dp"
+                    android:text="选择开始时间" />
+
+                <TextView
+                    android:id="@+id/event_end_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:gravity="center_vertical"
+                    android:paddingEnd="10dp"
+                    android:paddingStart="75dp"
+                    android:text="选择结束时间" />
+
+            </LinearLayout>
+            <!-- endregion -->
+
+        </LinearLayout>
+
+    </ScrollView>
+    <!-- endregion -->
 
 </LinearLayout>
