@@ -1,8 +1,8 @@
 package cc.ayakurayuki.reminder
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.ayakurayuki.reminder.database.DBSupport
 import cc.ayakurayuki.reminder.util.ColorUtils
+import cc.ayakurayuki.reminder.util.CommonUtils
 import com.github.tibolte.agendacalendarview.AgendaCalendarView
 import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent
 import com.github.tibolte.agendacalendarview.models.CalendarEvent
@@ -22,14 +23,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mAgendaCalendarView: AgendaCalendarView
     private lateinit var dbSupport: DBSupport
 
+    /**
+     * 初始化
+     * @param savedInstanceState
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
+        fab.setOnClickListener { _ ->
+            val intent = Intent(this@MainActivity, AddAlarmActivity::class.java)
+            startActivity(intent)
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -41,8 +46,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         dbSupport = DBSupport(applicationContext)
         initialAgendaCalendar()
+
+        CommonUtils.showTextToast(applicationContext, "OK")
     }
 
+    /**
+     * 返回键转入后台
+     */
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -51,12 +61,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    /**
+     * 创建菜单
+     * @param menu 菜单项
+     * @return
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
+    /**
+     * 菜单选项按下的事件
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -67,6 +85,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    /**
+     * 抽屉菜单事件绑定
+     */
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
@@ -94,16 +115,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
+    /**
+     * 程序关闭事件，同时需要关闭数据库连接
+     */
     override fun onDestroy() {
         super.onDestroy()
         dbSupport.close()
     }
 
+    /**
+     * 初始化日历视图
+     */
     private fun initialAgendaCalendar() {
         mAgendaCalendarView = findViewById(R.id.agenda_calendar_view)
 
-        // minimum and maximum date of our calendar
-        // 2 month behind, one year ahead, example: March 2015 <-> May 2015 <-> May 2016
+        // 设定日历的最大允许日期和最小限制日期
+        // 最早不超过两个月，最晚不超过一年
         val minDate = Calendar.getInstance()
         val maxDate = Calendar.getInstance()
 
