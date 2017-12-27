@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fab.setOnClickListener { _ ->
             val intent = Intent(this@MainActivity, AddAlarmActivity::class.java)
+            intent.putExtra("id", -1)
             startActivity(intent)
         }
 

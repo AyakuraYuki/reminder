@@ -1,15 +1,20 @@
 package cc.ayakurayuki.reminder
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.util.Log
 import android.view.View
 import android.widget.*
+import cc.ayakurayuki.reminder.bean.AlarmBean
 import cc.ayakurayuki.reminder.bean.AlarmTimeEnum
 import cc.ayakurayuki.reminder.bean.Color
 import cc.ayakurayuki.reminder.bean.ReplayTimeEnum
 import cc.ayakurayuki.reminder.database.DBSupport
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -36,7 +41,9 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var remark: EditText
     // endregion
 
+    private lateinit var mDataPicker: DatePickerDialog
     private lateinit var dbSupport: DBSupport
+    private lateinit var alarmBean: AlarmBean
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +51,8 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
         initialComponents()
         dbSupport = DBSupport(applicationContext)
+        val id = intent.extras.get("id").toString().toInt()
+        alarmBean = if (id == -1) AlarmBean() else dbSupport.get(id)
     }
 
     override fun onClick(view: View?) {
@@ -55,7 +64,8 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
             }
             R.id.event_date -> {
-
+                getDatePickerDialog()
+                mDataPicker.show()
             }
             R.id.event_start_time -> {
 
@@ -147,6 +157,23 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
                 bind(data)
             }
         }
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private fun getDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        mDataPicker = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+            val cal = Calendar.getInstance()
+            cal.set(year, monthOfYear, dayOfMonth)
+            val df = SimpleDateFormat("yyyy年MM月dd日  EE")
+            eventDate.text = df.format(cal.time)
+
+            //设置选择的年、月、日
+            alarmBean.year = year
+            alarmBean.month = monthOfYear
+            alarmBean.day = dayOfMonth
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
     }
 
 }
