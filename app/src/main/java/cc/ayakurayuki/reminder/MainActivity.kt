@@ -1,9 +1,11 @@
 package cc.ayakurayuki.reminder
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.support.design.widget.NavigationView
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
@@ -12,9 +14,13 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import cc.ayakurayuki.reminder.activity.AddAlarmActivity
 import cc.ayakurayuki.reminder.database.DBSupport
+import cc.ayakurayuki.reminder.service.SendAlarmBroadcast
 import cc.ayakurayuki.reminder.util.ColorUtils
+import cc.ayakurayuki.reminder.util.CommonUtils
 import cc.ayakurayuki.reminder.util.PermissionUtils
+import cc.ayakurayuki.reminder.util.PrefUtils
 import com.github.tibolte.agendacalendarview.AgendaCalendarView
 import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent
 import com.github.tibolte.agendacalendarview.models.CalendarEvent
@@ -26,6 +32,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     companion object {
         private val tag: String = MainActivity::class.java.name
+        private val requestCodeSign: Int = 1
         val permissions = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE
         )
@@ -34,6 +41,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var mAgendaCalendarView: AgendaCalendarView
     private lateinit var dbSupport: DBSupport
     private lateinit var permissionValidator: PermissionUtils
+    private var isAllowAlert = false
 
     /**
      * 初始化
@@ -63,6 +71,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         initialAgendaCalendar()
 
         permissionValidator = PermissionUtils(this)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            isAllowAlert = PrefUtils.getBoolean(this, "isAllowAlert", false)
+            if (!isAllowAlert) {
+                showPermissionDialog()
+            }
+        } else {
+            SendAlarmBroadcast.startAlarmService(this)
+        }
     }
 
     override fun onResume() {
@@ -130,6 +146,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         dbSupport.close()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            requestCodeSign -> {
+                if (Settings.canDrawOverlays(this)) {
+                    CommonUtils.showTextToast(this, "弹窗权限开启")
+                    PrefUtils.setBoolean(this@MainActivity, "isAllowAlert", true)
+                } else {
+                    PrefUtils.setBoolean(this@MainActivity, "isAllowAlert", false)
+                }
+            }
+        }
+    }
+
     /**
      * 初始化日历视图
      */
@@ -181,6 +211,22 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             )
             eventList.add(event)
         }
+    }
+
+    private fun showPermissionDialog() {
+        val builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("弹窗需要开启权限")
+                .setPositiveButton("开启") { _, _ -> requestAlertWindowPermission() }
+                .setNegativeButton("取消") { _, _ ->
+                    CommonUtils.showTextToast(this, "没有做任何操作")
+                }
+        builder.create().show()
+    }
+
+    private fun requestAlertWindowPermission() {
+        val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
+        intent.data = Uri.parse("package:" + packageName)
+        startActivityForResult(intent, requestCodeSign)
     }
 
 }

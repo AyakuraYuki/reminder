@@ -1,4 +1,4 @@
-package cc.ayakurayuki.reminder
+package cc.ayakurayuki.reminder.activity
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -14,6 +14,8 @@ import android.support.v7.widget.AppCompatImageButton
 import android.util.Log
 import android.view.View
 import android.widget.*
+import cc.ayakurayuki.reminder.MainActivity
+import cc.ayakurayuki.reminder.R
 import cc.ayakurayuki.reminder.bean.AlarmBean
 import cc.ayakurayuki.reminder.bean.AlarmTimeEnum
 import cc.ayakurayuki.reminder.bean.Color

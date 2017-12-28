@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Vibrator
 import android.view.WindowManager
 import cc.ayakurayuki.reminder.bean.AlarmBean
-import java.io.IOException
 
 /**
  * Created by ayakurayuki on 2017/12/25.
@@ -61,19 +60,15 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
         if (mediaPlayer.isPlaying)
             mediaPlayer.stop()
         mediaPlayer.reset()
-        try {
-            mediaPlayer.setVolume(100f, 100f)
-            mediaPlayer.setDataSource(context, ringtoneUri)
-            mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
-            mediaPlayer.isLooping = true
-            mediaPlayer.prepare()
-            mediaPlayer.start()
-            if (bean.vibrate == 1) {
-                vibrator.vibrate(longArrayOf(1000, 50, 1000, 50), 0)
-                isVibrator = true
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
+        mediaPlayer.setVolume(100f, 100f)
+        mediaPlayer.setDataSource(context, ringtoneUri)
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM)
+        mediaPlayer.isLooping = true
+        mediaPlayer.prepare()
+        mediaPlayer.start()
+        if (bean.vibrate == 1) {
+            vibrator.vibrate(longArrayOf(1000, 50, 1000, 50), 0)
+            isVibrator = true
         }
     }
 

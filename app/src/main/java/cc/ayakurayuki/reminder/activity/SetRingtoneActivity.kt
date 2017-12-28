@@ -1,4 +1,4 @@
-package cc.ayakurayuki.reminder
+package cc.ayakurayuki.reminder.activity
 
 import android.content.Intent
 import android.media.AudioManager
@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import cc.ayakurayuki.reminder.R
 import cc.ayakurayuki.reminder.adapter.SetRingtoneAdapter
 import cc.ayakurayuki.reminder.adapter.SetRingtoneAdapter.OnRecyclerViewItemClickListener
 
