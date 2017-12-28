@@ -41,7 +41,6 @@
             android:theme="@style/Fullscreen" />
         <!-- </editor-fold> -->
 
-
         <!-- <editor-fold desc="service"> -->
         <service
             android:name=".service.AlarmService"

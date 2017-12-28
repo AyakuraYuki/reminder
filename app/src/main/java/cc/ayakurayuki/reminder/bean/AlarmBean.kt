@@ -48,6 +48,18 @@ class AlarmBean : Serializable {
         this.allDay = 0
     }
 
+    fun isVibrate(): Boolean {
+        return this.vibrate == 1
+    }
+
+    fun setVibrate() {
+        this.vibrate = 1
+    }
+
+    fun unsetVibrate() {
+        this.vibrate = 0
+    }
+
     fun getRealAlarmTime(): Calendar {
         val calendar = Calendar.getInstance()
         calendar.set(year, month, day)

@@ -43,6 +43,18 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
                 Color.ORANGE,
                 Color.DEEP_SKY_BLUE
         )
+        val replayData = arrayListOf(
+                ReplayTimeEnum.NONE.title,
+                ReplayTimeEnum.DAILY.title,
+                ReplayTimeEnum.WEEKLY.title,
+                ReplayTimeEnum.YEARLY.title
+        )
+        val alarmTypeData = arrayListOf(
+                AlarmTimeEnum.NONE.title,
+                AlarmTimeEnum.TEN_MINUTE.title,
+                AlarmTimeEnum.HOUR.title,
+                AlarmTimeEnum.DAY.title
+        )
     }
 
     // region 动作栏
@@ -73,8 +85,9 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_alarm)
-        initialComponents()
         initialDBAndBean()
+        initialComponents()
+        prepareData()
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
@@ -200,6 +213,32 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
         alarmBean = if (id == 0) AlarmBean() else dbSupport.get(id)
     }
 
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
+    private fun prepareData() {
+        if (alarmBean.id != 0) {
+            eventTitle.setText(alarmBean.title)
+            switchAllDay.isChecked = alarmBean.isAllDay()
+            eventDate.text = "活动日期: ${SimpleDateFormat("yyyy年MM月dd日  EE").format(Calendar.getInstance().apply {
+                set(alarmBean.year, alarmBean.month, alarmBean.day)
+            }.time)}"
+            eventStartTime.text = "开始时间: ${SimpleDateFormat("HH:mm").format(Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, alarmBean.startTimeHour)
+                set(Calendar.MINUTE, alarmBean.startTimeMinute)
+            }.time)}"
+            eventEndTime.text = "结束时间: ${SimpleDateFormat("HH:mm").format(Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, alarmBean.endTimeHour)
+                set(Calendar.MINUTE, alarmBean.endTimeMinute)
+            }.time)}"
+            replayType.setSelection(replayData.indexOf(alarmBean.replay))
+            notificationType.setSelection(alarmTypeData.indexOf(alarmBean.alarmTime))
+            textViewRingtone.text = "请重新选择铃声"
+            switchVibration.isChecked = alarmBean.isVibrate()
+            locationEditView.setText(alarmBean.local)
+            color.setSelection(colorData.indexOf(alarmBean.alarmColor))
+            remark.setText(alarmBean.description)
+        }
+    }
+
     // 初始化Spinner下拉选项
     private fun bindSpinner(spinner: Spinner) {
         fun bind(data: ArrayList<String>) {
@@ -210,22 +249,10 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
         }
         when (spinner.id) {
             R.id.spinner_replay -> {
-                val data = arrayListOf(
-                        ReplayTimeEnum.NONE.title,
-                        ReplayTimeEnum.DAILY.title,
-                        ReplayTimeEnum.WEEKLY.title,
-                        ReplayTimeEnum.YEARLY.title
-                )
-                bind(data)
+                bind(replayData)
             }
             R.id.spinner_notifications -> {
-                val data = arrayListOf(
-                        AlarmTimeEnum.NONE.title,
-                        AlarmTimeEnum.TEN_MINUTE.title,
-                        AlarmTimeEnum.HOUR.title,
-                        AlarmTimeEnum.DAY.title
-                )
-                bind(data)
+                bind(alarmTypeData)
             }
         }
     }
@@ -304,8 +331,16 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun save() {
         alarmBean.title = eventTitle.text.toString()
-        alarmBean.allDay = if (switchAllDay.isChecked) 1 else 0
-        alarmBean.vibrate = if (switchVibration.isChecked) 1 else 0
+        if (switchAllDay.isChecked) {
+            alarmBean.setAllDay()
+        } else {
+            alarmBean.unsetAllDay()
+        }
+        if (switchVibration.isChecked) {
+            alarmBean.setVibrate()
+        } else {
+            alarmBean.unsetVibrate()
+        }
         alarmBean.alarmTime = spinner_notifications.selectedItem.toString()
         alarmBean.alarmColor = colorData[spinner_color_lens.selectedItemPosition]
         alarmBean.local = locationEditView.text.toString()

@@ -1,8 +1,11 @@
 package cc.ayakurayuki.reminder
 
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.widget.TextView
+import cc.ayakurayuki.reminder.activity.AlarmDetailActivity
 import com.github.tibolte.agendacalendarview.CalendarPickerController
 import com.github.tibolte.agendacalendarview.models.CalendarEvent
 import com.github.tibolte.agendacalendarview.models.DayItem
@@ -12,7 +15,7 @@ import java.util.*
 /**
  * Created by ayakurayuki on 2017/12/25.
  */
-class CalendarDatePickController(private var toolbar: Toolbar) : CalendarPickerController {
+class CalendarDatePickController(private var toolbar: Toolbar, var activity: AppCompatActivity) : CalendarPickerController {
 
     override fun onDaySelected(dayItem: DayItem?) {
         val toolbarTextView = getToolbarTitleView(toolbar)
@@ -27,7 +30,13 @@ class CalendarDatePickController(private var toolbar: Toolbar) : CalendarPickerC
     }
 
     override fun onEventSelected(event: CalendarEvent?) {
-        println(event?.id)
+        if (event != null) {
+            val intent = Intent(activity, AlarmDetailActivity::class.java).apply {
+                putExtra("id", event.id)
+            }
+            activity.startActivity(intent)
+            activity.finish()
+        }
     }
 
     private fun getToolbarTitleView(toolbar: Toolbar): TextView? {
