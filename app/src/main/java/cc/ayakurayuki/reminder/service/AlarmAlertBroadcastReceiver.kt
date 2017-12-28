@@ -21,7 +21,7 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
         const val alarmBundleKey = "alarm"
     }
 
-    private lateinit var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var vibrator: Vibrator
     private var isVibrator: Boolean = false
 
@@ -30,6 +30,7 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
         context!!.sendBroadcast(alarmServiceBroadcastReceiver, null)
         val bundle = alarmServiceBroadcastReceiver.extras
         val bean: AlarmBean = bundle.getSerializable(alarmBundleKey) as AlarmBean
+        println(bean.toString())
         showAlarmDialog(context, bean)
     }
 
@@ -41,15 +42,12 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
         builder.setTitle("距离您定的日期 ${bean.title} 已经到了哦！")
                 .setMessage(bean.description)
                 .setPositiveButton("我知道了", { _, _ ->
-                    if (mediaPlayer != null) {
-                        mediaPlayer.stop()
-                        mediaPlayer.release()
-                        mediaPlayer = MediaPlayer()
-                        if (isVibrator) {
-                            vibrator.cancel()
-                            isVibrator = false
-                        }
-
+                    mediaPlayer.stop()
+                    mediaPlayer.release()
+                    mediaPlayer = MediaPlayer()
+                    if (isVibrator) {
+                        vibrator.cancel()
+                        isVibrator = false
                     }
                 })
 
@@ -60,13 +58,9 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
 
     private fun playMusicAndVibrate(context: Context, bean: AlarmBean) {
         val ringtoneUri = Uri.parse(bean.alarmTonePath)
-        if (mediaPlayer == null) {
-            mediaPlayer = MediaPlayer()
-        } else {
-            if (mediaPlayer.isPlaying)
-                mediaPlayer.stop()
-            mediaPlayer.reset()
-        }
+        if (mediaPlayer.isPlaying)
+            mediaPlayer.stop()
+        mediaPlayer.reset()
         try {
             mediaPlayer.setVolume(100f, 100f)
             mediaPlayer.setDataSource(context, ringtoneUri)
@@ -81,7 +75,6 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
     }
 
 }

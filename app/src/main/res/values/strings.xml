@@ -18,4 +18,10 @@
     <string name="queue_ringtone">选择铃声</string>
     <string name="input_event_location">输入活动地点</string>
     <string name="remark">备注</string>
+    <string name="choose_ringtone_tip">选择铃声</string>
+    <string name="ringtone_name">铃声名称</string>
+    <string name="author">Ayakura Yuki</string>
+    <string name="author_email">AyakuraYuki@users.noreply.github.com</string>
+    <string name="communicate">联系我</string>
+    <string name="send">意见反馈</string>
 </resources>

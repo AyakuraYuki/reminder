@@ -1,15 +1,20 @@
 package cc.ayakurayuki.reminder
 
+import android.Manifest
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import cc.ayakurayuki.reminder.database.DBSupport
 import cc.ayakurayuki.reminder.util.ColorUtils
+import cc.ayakurayuki.reminder.util.PermissionUtils
 import com.github.tibolte.agendacalendarview.AgendaCalendarView
 import com.github.tibolte.agendacalendarview.models.BaseCalendarEvent
 import com.github.tibolte.agendacalendarview.models.CalendarEvent
@@ -19,8 +24,16 @@ import java.util.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    companion object {
+        private val tag: String = MainActivity::class.java.name
+        val permissions = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+    }
+
     private lateinit var mAgendaCalendarView: AgendaCalendarView
     private lateinit var dbSupport: DBSupport
+    private lateinit var permissionValidator: PermissionUtils
 
     /**
      * 初始化
@@ -32,9 +45,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { _ ->
+            Log.d(tag, "fab clicked")
             val intent = Intent(this@MainActivity, AddAlarmActivity::class.java)
-            intent.putExtra("id", -1)
+            intent.putExtra("id", 0)
             startActivity(intent)
+            this.finish()
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -46,6 +61,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         dbSupport = DBSupport(applicationContext)
         initialAgendaCalendar()
+
+        permissionValidator = PermissionUtils(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // 权限申请
+        permissions.filter { permissionValidator.permissionSet(it) }
+                .forEach { requestPermissions(permissions, 0) }
     }
 
     /**
@@ -65,7 +89,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * @return
      */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
@@ -74,9 +97,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
      * 菜单选项按下的事件
      */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_settings -> true
             else -> super.onOptionsItemSelected(item)
@@ -89,23 +109,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
-            }
-            R.id.nav_gallery -> {
-
-            }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
             R.id.nav_send -> {
-
+                val intent = Intent(Intent.ACTION_SENDTO).apply {
+                    data = Uri.parse("mailto:AyakuraYuki@users.noreply.github.com")
+                    putExtra(Intent.EXTRA_SUBJECT, "问题反馈")
+                }
+                startActivity(intent)
             }
         }
 
@@ -148,10 +157,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val all = dbSupport.all()
         all.forEach {
             val startTime = Calendar.getInstance().apply {
+                set(Calendar.YEAR, it.year)
+                set(Calendar.MONTH, it.month - 1)
+                set(Calendar.DAY_OF_MONTH, it.day)
                 set(Calendar.HOUR_OF_DAY, it.startTimeHour)
                 set(Calendar.MINUTE, it.startTimeMinute)
             }
             val endTime = Calendar.getInstance().apply {
+                set(Calendar.YEAR, it.year)
+                set(Calendar.MONTH, it.month - 1)
+                set(Calendar.DAY_OF_MONTH, it.day)
                 set(Calendar.HOUR_OF_DAY, it.endTimeHour)
                 set(Calendar.MINUTE, it.endTimeMinute)
             }
@@ -159,7 +174,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     it.title,
                     it.description,
                     it.local,
-                    ColorUtils.colorFromString(it.alarmColor),
+                    ContextCompat.getColor(this, ColorUtils.colorFromString(it.alarmColor)),
                     startTime,
                     endTime,
                     it.isAllDay()
@@ -167,32 +182,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             eventList.add(event)
         }
     }
-
-    /*
-    private fun getToolbarTitleView(activity: AppCompatActivity, toolbar: Toolbar): TextView? {
-        val actionBar = activity.supportActionBar
-        var actionbarTitle: CharSequence? = null
-        if (actionBar != null) {
-            actionbarTitle = actionBar.title
-        }
-        actionbarTitle = if (TextUtils.isEmpty(actionbarTitle)) toolbar.title else actionbarTitle
-        if (TextUtils.isEmpty(actionbarTitle)) {
-            return null
-        }
-        // can't find if title not set
-        for (i in 0 until toolbar.childCount) {
-            val view = toolbar.getChildAt(i)
-            if (view != null && view is TextView) {
-                val title = view.text
-                if (!TextUtils.isEmpty(title) && actionbarTitle == title && view.id == View.NO_ID) {
-                    //Toolbar does not assign id to views with layout params SYSTEM, hence getId() == View.NO_ID
-                    //in same manner subtitle TextView can be obtained.
-                    return view
-                }
-            }
-        }
-        return null
-    }
-    */
 
 }

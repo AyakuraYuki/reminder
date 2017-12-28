@@ -2,7 +2,13 @@ package cc.ayakurayuki.reminder
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
 import android.util.Log
@@ -13,13 +19,28 @@ import cc.ayakurayuki.reminder.bean.AlarmTimeEnum
 import cc.ayakurayuki.reminder.bean.Color
 import cc.ayakurayuki.reminder.bean.ReplayTimeEnum
 import cc.ayakurayuki.reminder.database.DBSupport
+import cc.ayakurayuki.reminder.service.SendAlarmBroadcast
+import cc.ayakurayuki.reminder.util.ColorUtils
+import cc.ayakurayuki.reminder.util.CommonUtils
+import kotlinx.android.synthetic.main.activity_add_alarm.*
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.HashMap
 
 class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
         private val tag: String = AddAlarmActivity::class.java.name
+        private val ringtoneRequestCode: Int = 1
+        val colorData = arrayListOf(
+                Color.ALARM_DEFAULT,
+                Color.BASIL_GREEN,
+                Color.SHINY_YELLOW,
+                Color.TOMATO_RED,
+                Color.UNDERTONE_GREY,
+                Color.ORANGE,
+                Color.DEEP_SKY_BLUE
+        )
     }
 
     // region 动作栏
@@ -41,42 +62,87 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var remark: EditText
     // endregion
 
-    private lateinit var mDataPicker: DatePickerDialog
+    private lateinit var vibrator: Vibrator
+    private lateinit var dataPicker: DatePickerDialog
+    private lateinit var timePicker: TimePickerDialog
     private lateinit var dbSupport: DBSupport
     private lateinit var alarmBean: AlarmBean
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_alarm)
-
         initialComponents()
-        dbSupport = DBSupport(applicationContext)
-        val id = intent.extras.get("id").toString().toInt()
-        alarmBean = if (id == -1) AlarmBean() else dbSupport.get(id)
+        initialDBAndBean()
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.button_close_activity -> {
+                startActivity(Intent(this@AddAlarmActivity, MainActivity::class.java))
                 this.finish()
             }
             R.id.textView_save -> {
-
+                when {
+                    eventDate.text.toString() == getString(R.string.select_event_date_tip) -> {
+                        CommonUtils.showTextToast(this, "活动日期未选择")
+                    }
+                    !switchAllDay.isChecked -> {
+                        when {
+                            eventStartTime.text.toString() == getString(R.string.select_start_time_tip) -> {
+                                CommonUtils.showTextToast(this, "开始时间未选择")
+                            }
+                            eventEndTime.text.toString() == getString(R.string.select_end_time_tip) -> {
+                                CommonUtils.showTextToast(this, "结束时间未选择")
+                            }
+                            else -> {
+                                save()
+                                startActivity(Intent(this@AddAlarmActivity, MainActivity::class.java))
+                                this.finish()
+                            }
+                        }
+                    }
+                    else -> {
+                        save()
+                        startActivity(Intent(this@AddAlarmActivity, MainActivity::class.java))
+                        this.finish()
+                    }
+                }
             }
             R.id.event_date -> {
                 getDatePickerDialog()
-                mDataPicker.show()
+                dataPicker.show()
             }
             R.id.event_start_time -> {
-
+                getTimePickerDialog(eventStartTime)
+                timePicker.show()
             }
             R.id.event_end_time -> {
-
+                getTimePickerDialog(eventEndTime)
+                timePicker.show()
             }
             R.id.textView_select_ringtone -> {
-
+                startActivityForResult(Intent(this@AddAlarmActivity, SetRingtoneActivity::class.java), ringtoneRequestCode)
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            ringtoneRequestCode -> {
+                val name = data?.getStringExtra("ringtoneName")
+                val path = data?.getStringExtra("ringtonePath")
+                textViewRingtone.text = if (name == "") "选择铃声" else name
+                alarmBean.alarmTonePath = if (path == "") "" else path
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this@AddAlarmActivity, MainActivity::class.java))
+        this.finish()
     }
 
     override fun onDestroy() {
@@ -113,8 +179,23 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
         bindSpinner(replayType)
         bindSpinner(notificationType)
         textViewRingtone.setOnClickListener(this)
-        bindSpinner(color)
+        bindColorSpinner(color)
         // endregion
+        switchVibration.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
+                } else {
+                    vibrator.vibrate(500)
+                }
+            }
+        }
+    }
+
+    private fun initialDBAndBean() {
+        dbSupport = DBSupport(applicationContext)
+        val id = intent.extras.get("id").toString().toInt()
+        alarmBean = if (id == 0) AlarmBean() else dbSupport.get(id)
     }
 
     // 初始化Spinner下拉选项
@@ -144,36 +225,93 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 bind(data)
             }
-            R.id.spinner_color_lens -> {
-                val data = arrayListOf(
-                        Color.ALARM_DEFAULT,
-                        Color.BASIL_GREEN,
-                        Color.SHINY_YELLOW,
-                        Color.TOMATO_RED,
-                        Color.UNDERTONE_GREY,
-                        Color.ORANGE,
-                        Color.DEEP_SKY_BLUE
-                )
-                bind(data)
-            }
         }
     }
 
-    @SuppressLint("SimpleDateFormat")
+    private fun bindColorSpinner(colorSpinner: Spinner) {
+        val list = ArrayList<Map<String, Any>>()
+        colorData.forEach {
+            val map = HashMap<String, Any>().apply {
+                put("iv_color_circle", ColorUtils.colorFromString(it))
+                put("color_title", it)
+            }
+            list.add(map)
+        }
+        colorSpinner.adapter = SimpleAdapter(
+                this,
+                list,
+                R.layout.color_spinner_dropdown_item,
+                arrayOf("iv_color_circle", "color_title"),
+                intArrayOf(R.id.iv_color_circle, R.id.color_title)
+        )
+        color.setSelection(0)
+    }
+
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
     private fun getDatePickerDialog() {
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
-        mDataPicker = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
-            val cal = Calendar.getInstance()
-            cal.set(year, monthOfYear, dayOfMonth)
-            val df = SimpleDateFormat("yyyy年MM月dd日  EE")
-            eventDate.text = df.format(cal.time)
+        dataPicker = DatePickerDialog(
+                this,
+                DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
+                    val cal = Calendar.getInstance().apply {
+                        // 将选取事件获得的参数转入监听器事件中
+                        set(year, monthOfYear, dayOfMonth)
+                    }
+                    eventDate.text = "活动日期: ${SimpleDateFormat("yyyy年MM月dd日  EE").format(cal.time)}" // 显示到界面上
+                    alarmBean.year = year // 设置年
+                    alarmBean.month = monthOfYear // 设置月
+                    alarmBean.day = dayOfMonth // 设置日
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+        )
+    }
 
-            //设置选择的年、月、日
-            alarmBean.year = year
-            alarmBean.month = monthOfYear
-            alarmBean.day = dayOfMonth
-        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH))
+    @SuppressLint("SimpleDateFormat", "SetTextI18n")
+    private fun getTimePickerDialog(view: View) {
+        val calendar = Calendar.getInstance()
+        timePicker = TimePickerDialog(
+                this,
+                TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+                    val cal = Calendar.getInstance().apply {
+                        // 将选取事件获得的参数转入监听器事件中
+                        set(Calendar.HOUR_OF_DAY, hourOfDay)
+                        set(Calendar.MINUTE, minute)
+                    }
+                    // 根据传入参数判断对象
+                    when (view.id) {
+                        R.id.event_start_time -> {
+                            eventStartTime.text = "开始时间: ${SimpleDateFormat("HH:mm").format(cal.time)}"
+                            alarmBean.startTimeHour = hourOfDay
+                            alarmBean.startTimeMinute = minute
+                        }
+                        R.id.event_end_time -> {
+                            eventEndTime.text = "结束时间: ${SimpleDateFormat("HH:mm").format(cal.time)}"
+                            alarmBean.endTimeHour = hourOfDay
+                            alarmBean.endTimeMinute = minute
+                        }
+                    }
+                },
+                calendar.get(Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                true
+        )
+    }
+
+    private fun save() {
+        alarmBean.title = eventTitle.text.toString()
+        alarmBean.allDay = if (switchAllDay.isChecked) 1 else 0
+        alarmBean.vibrate = if (switchVibration.isChecked) 1 else 0
+        alarmBean.alarmTime = spinner_notifications.selectedItem.toString()
+        alarmBean.alarmColor = colorData[spinner_color_lens.selectedItemPosition]
+        alarmBean.local = locationEditView.text.toString()
+        alarmBean.description = remark.text.toString()
+        alarmBean.replay = spinner_replay.selectedItem.toString()
+        alarmBean.month += 1
+        dbSupport.save(alarmBean)
+        SendAlarmBroadcast.startAlarmService(this)
     }
 
 }

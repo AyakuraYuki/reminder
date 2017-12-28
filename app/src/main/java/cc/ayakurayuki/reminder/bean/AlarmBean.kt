@@ -85,11 +85,11 @@ class AlarmBean : Serializable {
         val intent = Intent(context, AlarmAlertBroadcastReceiver::class.java)
         intent.putExtra(AlarmAlertBroadcastReceiver.alarmBundleKey, this)
 
-        val operation = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val sender = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-
+        println(getRealAlarmTime())
         // 设置带有重复的提醒
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getRealAlarmTime().timeInMillis, getReplayTime(), operation)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getRealAlarmTime().timeInMillis, getReplayTime(), sender)
     }
 
     override fun toString(): String {

@@ -4,6 +4,9 @@
     package="cc.ayakurayuki.reminder">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="false"
@@ -26,12 +29,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".AddAlarmActivity"
+            android:theme="@style/Fullscreen"
+            android:windowSoftInputMode="adjustResize|stateHidden" />
+        <activity
+            android:name=".SetRingtoneActivity"
             android:theme="@style/Fullscreen" />
         <!-- </editor-fold> -->
-
 
         <!-- <editor-fold desc="service"> -->
         <service
@@ -44,10 +49,8 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name=".service.AlarmAlertBroadcastReceiver" />
         <!-- </editor-fold> -->
-
     </application>
 
 </manifest>

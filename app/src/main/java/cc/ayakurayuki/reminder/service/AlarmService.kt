@@ -34,8 +34,8 @@ class AlarmService : Service() {
     }
 
     private fun getNext(): AlarmBean? {
-        val support = DBSupport(applicationContext)
-        val all = support.all()
+        val dbSupport = DBSupport(applicationContext)
+        val all = dbSupport.all()
 
         if (all.isEmpty()) {
             return null
@@ -48,6 +48,7 @@ class AlarmService : Service() {
                 -1
             }
         }
+
         return all.indices.firstOrNull {
             all[it].getRealAlarmTime().timeInMillis - all[it].getCurrentTime().timeInMillis > 0
         }?.let { all[it] }
