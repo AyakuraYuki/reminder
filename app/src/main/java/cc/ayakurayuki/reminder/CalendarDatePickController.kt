@@ -27,7 +27,7 @@ class CalendarDatePickController(private var toolbar: Toolbar) : CalendarPickerC
     }
 
     override fun onEventSelected(event: CalendarEvent?) {
-
+        println(event?.id)
     }
 
     private fun getToolbarTitleView(toolbar: Toolbar): TextView? {

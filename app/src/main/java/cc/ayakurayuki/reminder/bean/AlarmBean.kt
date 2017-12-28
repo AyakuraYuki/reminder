@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import cc.ayakurayuki.reminder.service.AlarmAlertBroadcastReceiver
 import java.io.Serializable
 import java.util.*
@@ -12,6 +13,10 @@ import java.util.*
  * Created by ayakurayuki on 2017/12/25.
  */
 class AlarmBean : Serializable {
+
+    companion object {
+        private val tag: String = AlarmBean::class.java.name
+    }
 
     var id: Int = 0
     var title: String? = null
@@ -84,10 +89,9 @@ class AlarmBean : Serializable {
     fun schedule(context: Context) {
         val intent = Intent(context, AlarmAlertBroadcastReceiver::class.java)
         intent.putExtra(AlarmAlertBroadcastReceiver.alarmBundleKey, this)
-
+        Log.d(tag, "${intent.extras.get(AlarmAlertBroadcastReceiver.alarmBundleKey)}")
         val sender = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        println(getRealAlarmTime())
         // 设置带有重复的提醒
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getRealAlarmTime().timeInMillis, getReplayTime(), sender)
     }
