@@ -54,8 +54,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         fab.setOnClickListener { _ ->
             Log.d(tag, "fab clicked")
-            val intent = Intent(this@MainActivity, AddAlarmActivity::class.java)
-            intent.putExtra("id", 0)
+            val intent = Intent(this@MainActivity, AddAlarmActivity::class.java).apply {
+                putExtra("id", 0)
+            }
             startActivity(intent)
             this.finish()
         }
@@ -179,7 +180,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         mockList(eventList)
 
         mAgendaCalendarView.init(
-                eventList, minDate, maxDate, Locale.getDefault(), CalendarDatePickController(toolbar)
+                eventList, minDate, maxDate, Locale.getDefault(), CalendarDatePickController(toolbar, this)
         )
     }
 
@@ -208,7 +209,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     startTime,
                     endTime,
                     it.isAllDay()
-            )
+            ).apply {
+                id = it.id.toLong()
+            }
             eventList.add(event)
         }
     }
