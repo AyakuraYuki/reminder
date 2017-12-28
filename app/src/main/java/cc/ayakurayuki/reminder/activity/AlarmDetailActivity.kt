@@ -42,6 +42,8 @@ class AlarmDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         when (v?.id) {
             R.id.button_close_activity -> {
+                val intent = Intent(this@AlarmDetailActivity, MainActivity::class.java)
+                startActivity(intent)
                 this@AlarmDetailActivity.finish()
             }
             R.id.button_delete -> {

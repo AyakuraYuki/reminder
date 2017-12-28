@@ -85,10 +85,10 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_alarm)
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         initialDBAndBean()
         initialComponents()
         prepareData()
-        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
     }
 
     override fun onClick(view: View?) {
@@ -287,7 +287,7 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
                         // 将选取事件获得的参数转入监听器事件中
                         set(year, monthOfYear, dayOfMonth)
                     }
-                    eventDate.text = "活动日期: ${SimpleDateFormat("yyyy年MM月dd日  EE").format(cal.time)}" // 显示到界面上
+                    eventDate.text = "活动日期: ${SimpleDateFormat("yyyy年MM月dd日").format(cal.time)}" // 显示到界面上
                     alarmBean.year = year // 设置年
                     alarmBean.month = monthOfYear // 设置月
                     alarmBean.day = dayOfMonth // 设置日
@@ -346,7 +346,9 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
         alarmBean.local = locationEditView.text.toString()
         alarmBean.description = remark.text.toString()
         alarmBean.replay = spinner_replay.selectedItem.toString()
-        alarmBean.month += 1
+
+        alarmBean.month = eventDate.text.substring(eventDate.text.indexOf("年") + 1, eventDate.text.indexOf("月")).toInt()
+
         dbSupport.save(alarmBean)
         SendAlarmBroadcast.startAlarmService(this)
     }

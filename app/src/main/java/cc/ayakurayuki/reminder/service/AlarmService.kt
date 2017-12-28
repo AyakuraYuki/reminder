@@ -29,7 +29,6 @@ class AlarmService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val alarmBean: AlarmBean? = getNext()
-        Log.d(tag, "$tag: ${alarmBean.toString()}")
         alarmBean?.schedule(applicationContext)
         return START_NOT_STICKY
     }

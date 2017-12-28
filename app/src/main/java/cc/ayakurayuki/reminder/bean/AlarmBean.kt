@@ -101,7 +101,7 @@ class AlarmBean : Serializable {
     fun schedule(context: Context) {
         val intent = Intent(context, AlarmAlertBroadcastReceiver::class.java)
         intent.putExtra(AlarmAlertBroadcastReceiver.alarmBundleKey, this)
-        Log.d(tag, "${intent.extras.get(AlarmAlertBroadcastReceiver.alarmBundleKey)}")
+        Log.d(tag, toString())
         val sender = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         // 设置带有重复的提醒

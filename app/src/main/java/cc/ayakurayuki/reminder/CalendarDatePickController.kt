@@ -34,8 +34,10 @@ class CalendarDatePickController(private var toolbar: Toolbar, var activity: App
             val intent = Intent(activity, AlarmDetailActivity::class.java).apply {
                 putExtra("id", event.id)
             }
-            activity.startActivity(intent)
-            activity.finish()
+            if (event.id != 0L) {
+                activity.startActivity(intent)
+                activity.finish()
+            }
         }
     }
 
