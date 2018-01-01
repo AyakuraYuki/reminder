@@ -3,7 +3,6 @@ package cc.ayakurayuki.reminder.service
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
 import cc.ayakurayuki.reminder.bean.AlarmBean
 import cc.ayakurayuki.reminder.database.DBSupport
 import java.util.*
@@ -13,23 +12,12 @@ import java.util.*
  */
 class AlarmService : Service() {
 
-    companion object {
-        private val tag = AlarmService::class.java.name
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        Log.d(tag, "$tag: created")
-    }
-
     override fun onBind(intent: Intent?): IBinder? {
-        Log.d(tag, "$tag: binding...")
         return null
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val alarmBean: AlarmBean? = getNext()
-        alarmBean?.schedule(applicationContext)
+        getNext()?.schedule(applicationContext)
         return START_NOT_STICKY
     }
 

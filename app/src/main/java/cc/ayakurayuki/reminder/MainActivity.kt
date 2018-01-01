@@ -16,7 +16,7 @@ import android.view.Menu
 import android.view.MenuItem
 import cc.ayakurayuki.reminder.activity.AddAlarmActivity
 import cc.ayakurayuki.reminder.database.DBSupport
-import cc.ayakurayuki.reminder.service.SendAlarmBroadcast
+import cc.ayakurayuki.reminder.service.AlarmServiceBroadcastReceiver
 import cc.ayakurayuki.reminder.util.ColorUtils
 import cc.ayakurayuki.reminder.util.CommonUtils
 import cc.ayakurayuki.reminder.util.PermissionUtils
@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val permissions = arrayOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE
         )
+        const val extraName = "alarm"
     }
 
     private lateinit var mAgendaCalendarView: AgendaCalendarView
@@ -78,7 +79,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 showPermissionDialog()
             }
         } else {
-            SendAlarmBroadcast.startAlarmService(this)
+            val alarmServiceIntent = Intent(this, AlarmServiceBroadcastReceiver::class.java)
+            this.sendBroadcast(alarmServiceIntent)
         }
     }
 
@@ -189,14 +191,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         all.forEach {
             val startTime = Calendar.getInstance().apply {
                 set(Calendar.YEAR, it.year)
-                set(Calendar.MONTH, it.month - 1)
+                set(Calendar.MONTH, it.month)
                 set(Calendar.DAY_OF_MONTH, it.day)
                 set(Calendar.HOUR_OF_DAY, it.startTimeHour)
                 set(Calendar.MINUTE, it.startTimeMinute)
             }
             val endTime = Calendar.getInstance().apply {
                 set(Calendar.YEAR, it.year)
-                set(Calendar.MONTH, it.month - 1)
+                set(Calendar.MONTH, it.month)
                 set(Calendar.DAY_OF_MONTH, it.day)
                 set(Calendar.HOUR_OF_DAY, it.endTimeHour)
                 set(Calendar.MINUTE, it.endTimeMinute)

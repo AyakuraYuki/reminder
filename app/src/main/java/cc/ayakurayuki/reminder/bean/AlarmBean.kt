@@ -4,8 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import cc.ayakurayuki.reminder.service.AlarmAlertBroadcastReceiver
+import cc.ayakurayuki.reminder.MainActivity
+import cc.ayakurayuki.reminder.service.AlertBroadcastReceiver
 import java.io.Serializable
 import java.util.*
 
@@ -13,10 +13,6 @@ import java.util.*
  * Created by ayakurayuki on 2017/12/25.
  */
 class AlarmBean : Serializable {
-
-    companion object {
-        private val tag: String = AlarmBean::class.java.name
-    }
 
     var id: Int = 0
     var title: String? = null
@@ -82,7 +78,7 @@ class AlarmBean : Serializable {
         return calendar
     }
 
-    private fun getReplayTime(): Long {
+    fun getReplayTime(): Long {
         return when (replay) {
             ReplayTimeEnum.NONE.title -> ReplayTimeEnum.NONE.time
             ReplayTimeEnum.DAILY.title -> ReplayTimeEnum.DAILY.time
@@ -99,12 +95,11 @@ class AlarmBean : Serializable {
     }
 
     fun schedule(context: Context) {
-        val intent = Intent(context, AlarmAlertBroadcastReceiver::class.java)
-        intent.putExtra(AlarmAlertBroadcastReceiver.alarmBundleKey, this)
-        Log.d(tag, toString())
-        val sender = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        val broadcastIntent = Intent(context, AlertBroadcastReceiver::class.java)
+        broadcastIntent.putExtra("id", id)
+        broadcastIntent.putExtra(MainActivity.extraName, this)
+        val sender = PendingIntent.getBroadcast(context, id, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        // 设置带有重复的提醒
         alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, getRealAlarmTime().timeInMillis, getReplayTime(), sender)
     }
 

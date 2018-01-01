@@ -13,6 +13,8 @@ import cc.ayakurayuki.reminder.MainActivity
 import cc.ayakurayuki.reminder.R
 import cc.ayakurayuki.reminder.bean.AlarmBean
 import cc.ayakurayuki.reminder.database.DBSupport
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AlarmDetailActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -77,7 +79,7 @@ class AlarmDetailActivity : AppCompatActivity(), View.OnClickListener {
         dbSupport.close()
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SimpleDateFormat")
     private fun initialComponents() {
         buttonCloseActivity = findViewById(R.id.button_close_activity)
         buttonDelete = findViewById(R.id.button_delete)
@@ -94,7 +96,10 @@ class AlarmDetailActivity : AppCompatActivity(), View.OnClickListener {
         updateFab.setOnClickListener(this)
 
         detailAlarmTitle.text = bean.title
-        detailAlarmDate.text = "${bean.year}-${bean.month}-${bean.day}"
+        val cal = Calendar.getInstance().apply {
+            set(bean.year, bean.month, bean.day)
+        }
+        detailAlarmDate.text = SimpleDateFormat("yyyy年MM月dd日").format(cal.time)
         detailAlarmStartEndTime.text = "${bean.startTimeHour}:${bean.startTimeMinute} ~ ${bean.endTimeHour}:${bean.endTimeMinute}"
         detailAlarmRemind.text = "${bean.alarmTime}"
         detailAlarmLocal.text = "${bean.local}"

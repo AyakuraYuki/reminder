@@ -10,26 +10,21 @@ import android.net.Uri
 import android.os.Vibrator
 import android.view.WindowManager
 import cc.ayakurayuki.reminder.bean.AlarmBean
+import cc.ayakurayuki.reminder.database.DBSupport
 
 /**
  * Created by ayakurayuki on 2017/12/25.
  */
-class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
-
-    companion object {
-        const val alarmBundleKey = "alarm"
-    }
+class AlertBroadcastReceiver : BroadcastReceiver() {
 
     private var mediaPlayer: MediaPlayer = MediaPlayer()
     private lateinit var vibrator: Vibrator
     private var isVibrator: Boolean = false
 
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val alarmServiceBroadcastReceiver = Intent(context, AlarmServiceBroadcastReceiver::class.java)
-        context!!.sendBroadcast(alarmServiceBroadcastReceiver, null)
-        val bundle = alarmServiceBroadcastReceiver.extras
-        val bean: AlarmBean = bundle.getSerializable(alarmBundleKey) as AlarmBean
-        println(bean.toString())
+    override fun onReceive(context: Context, intent: Intent?) {
+        val receiver = Intent(context, AlarmServiceBroadcastReceiver::class.java)
+        context.sendBroadcast(receiver)
+        val bean = get(context, intent!!.extras["id"].toString())
         showAlarmDialog(context, bean)
     }
 
@@ -70,6 +65,11 @@ class AlarmAlertBroadcastReceiver : BroadcastReceiver() {
             vibrator.vibrate(longArrayOf(1000, 50, 1000, 50), 0)
             isVibrator = true
         }
+    }
+
+    private fun get(context: Context, id: String): AlarmBean {
+        val dbSupport = DBSupport(context)
+        return dbSupport.get(id.toInt())
     }
 
 }

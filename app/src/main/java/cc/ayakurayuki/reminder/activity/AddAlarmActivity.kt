@@ -11,7 +11,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.AppCompatImageButton
-import android.util.Log
 import android.view.View
 import android.widget.*
 import cc.ayakurayuki.reminder.MainActivity
@@ -21,7 +20,7 @@ import cc.ayakurayuki.reminder.bean.AlarmTimeEnum
 import cc.ayakurayuki.reminder.bean.Color
 import cc.ayakurayuki.reminder.bean.ReplayTimeEnum
 import cc.ayakurayuki.reminder.database.DBSupport
-import cc.ayakurayuki.reminder.service.SendAlarmBroadcast
+import cc.ayakurayuki.reminder.service.AlarmServiceBroadcastReceiver
 import cc.ayakurayuki.reminder.util.ColorUtils
 import cc.ayakurayuki.reminder.util.CommonUtils
 import kotlinx.android.synthetic.main.activity_add_alarm.*
@@ -32,7 +31,6 @@ import kotlin.collections.HashMap
 class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
-        private val tag: String = AddAlarmActivity::class.java.name
         private val ringtoneRequestCode: Int = 1
         val colorData = arrayListOf(
                 Color.ALARM_DEFAULT,
@@ -158,11 +156,6 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
     override fun onBackPressed() {
         startActivity(Intent(this@AddAlarmActivity, MainActivity::class.java))
         this.finish()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(tag, "on destroy")
     }
 
     /**
@@ -346,11 +339,10 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
         alarmBean.local = locationEditView.text.toString()
         alarmBean.description = remark.text.toString()
         alarmBean.replay = spinner_replay.selectedItem.toString()
-
-        alarmBean.month = eventDate.text.substring(eventDate.text.indexOf("年") + 1, eventDate.text.indexOf("月")).toInt()
-
         dbSupport.save(alarmBean)
-        SendAlarmBroadcast.startAlarmService(this)
+
+        val alarmServiceIntent = Intent(this, AlarmServiceBroadcastReceiver::class.java)
+        this.sendBroadcast(alarmServiceIntent)
     }
 
 }
