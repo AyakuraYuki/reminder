@@ -28,6 +28,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
+
 class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
 
     companion object {
@@ -224,7 +225,7 @@ class AddAlarmActivity : AppCompatActivity(), View.OnClickListener {
             }.time)}"
             replayType.setSelection(replayData.indexOf(alarmBean.replay))
             notificationType.setSelection(alarmTypeData.indexOf(alarmBean.alarmTime))
-            textViewRingtone.text = "请重新选择铃声"
+            textViewRingtone.text = "如果要改变铃声，请点此"
             switchVibration.isChecked = alarmBean.isVibrate()
             locationEditView.setText(alarmBean.local)
             color.setSelection(colorData.indexOf(alarmBean.alarmColor))
