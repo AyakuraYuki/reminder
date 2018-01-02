@@ -32,5 +32,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     compile 'com.github.tibolte:agendacalendarview:1.0.4'
-    debugCompile 'com.amitshekhar.android:debug-db:1.0.1'
+    //    debugCompile 'com.amitshekhar.android:debug-db:1.0.1'
 }

@@ -33,7 +33,7 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
         playMusicAndVibrate(context, bean)
 
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("距离您定的日期 ${bean.title} 已经到了哦！")
+        builder.setTitle("距离您定的活动 ${bean.title} 已经到了哦！")
                 .setMessage("活动时间: ${bean.year}/${bean.month}/${bean.day}\n" +
                         "全天活动: ${if (bean.isAllDay()) "是" else "不是"}\n" +
                         "开始时间: ${bean.startTimeHour}:${bean.startTimeMinute}\n" +
