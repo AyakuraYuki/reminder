@@ -74,6 +74,11 @@ class AlarmDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    override fun onBackPressed() {
+        startActivity(Intent(this@AlarmDetailActivity, MainActivity::class.java))
+        this@AlarmDetailActivity.finish()
+    }
+
     override fun finish() {
         super.finish()
         dbSupport.close()

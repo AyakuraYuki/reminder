@@ -34,19 +34,18 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
 
         val builder = AlertDialog.Builder(context)
         builder.setTitle("距离您定的日期 ${bean.title} 已经到了哦！")
-                .setMessage(bean.description)
+                .setMessage("活动时间: ${bean.year}/${bean.month}/${bean.day}\n" +
+                        "全天活动: ${if (bean.isAllDay()) "是" else "不是"}\n" +
+                        "开始时间: ${bean.startTimeHour}:${bean.startTimeMinute}\n" +
+                        "结束时间: ${bean.endTimeHour}:${bean.endTimeMinute}\n" +
+                        "备注信息: ${if (bean.description != "") bean.description else "暂无"}")
                 .setPositiveButton("我知道了", { _, _ ->
-                    mediaPlayer.stop()
-                    mediaPlayer.release()
-                    mediaPlayer = MediaPlayer()
-                    if (isVibrator) {
-                        vibrator.cancel()
-                        isVibrator = false
-                    }
+                    stopAlarm()
                 })
 
         val dialog = builder.create()
         dialog.window!!.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT)
+        dialog.setOnCancelListener { stopAlarm() }
         dialog.show()
     }
 
@@ -70,6 +69,16 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
     private fun get(context: Context, id: String): AlarmBean {
         val dbSupport = DBSupport(context)
         return dbSupport.get(id.toInt())
+    }
+
+    private fun stopAlarm() {
+        mediaPlayer.stop()
+        mediaPlayer.release()
+        mediaPlayer = MediaPlayer()
+        if (isVibrator) {
+            vibrator.cancel()
+            isVibrator = false
+        }
     }
 
 }
